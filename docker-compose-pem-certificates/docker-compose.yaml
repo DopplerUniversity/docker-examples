@@ -1,0 +1,16 @@
+version: '3.9'
+services:
+  web:
+    image: alpine
+    container_name: doppler-pem-certificates
+    working_dir: /usr/src/app
+    init: true
+    command: ['/bin/sh', '-c', 'apk add openssl && openssl x509 -in $${DOCKER_SECRETS_DIR}/tls.cert -inform pem -noout -text']
+    # Only variables listed here will be passed through from Doppler to the container
+    environment:
+      APP_URL: https://${HOSTNAME}:${PORT} # Example of creating a new environment variable using values from Doppler
+      DOCKER_SECRETS_DIR: $DOCKER_SECRETS_DIR # Syntax for passing an envirionment variable form Doppler to the container
+    volumes:
+      # Generate tls.cert and tls.key files using Doppler CLI prior to running `docker-compose up`
+      - $PWD/tls.cert:/usr/src/app/${DOCKER_SECRETS_DIR}/tls.cert
+      - $PWD/tls.key:/usr/src/app/${DOCKER_SECRETS_DIR}/tls.key

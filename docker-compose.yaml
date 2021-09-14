@@ -1,0 +1,8 @@
+version: '3.9'
+
+services:
+  web:
+    image: alpine
+    container_name: doppler-test
+    init: true
+    command: ['printenv']
